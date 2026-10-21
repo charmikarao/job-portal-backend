@@ -1,0 +1,310 @@
+{
+  "info": {
+    "name": "Job Portal Backend API",
+    "description": "Collection covering public, authenticated, and role-protected endpoints for the Job Portal Backend API. Login requests store the httpOnly JWT cookie automatically in Postman's cookie jar for {{baseUrl}}, so subsequent requests in the same session are authenticated without extra setup.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "jobId", "value": "" },
+    { "key": "applicationId", "value": "" },
+    { "key": "employerJobId", "value": "" },
+    { "key": "userId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register Job Seeker",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jamie Seeker\",\n  \"email\": \"jamie.seeker@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"jobseeker\",\n  \"skills\": [\"Node.js\", \"MongoDB\"],\n  \"education\": [{ \"degree\": \"B.Tech CSE\", \"institution\": \"State University\", \"yearOfCompletion\": 2023 }],\n  \"experience\": [{ \"title\": \"Backend Intern\", \"company\": \"TechCorp\", \"years\": 1, \"description\": \"Built REST APIs\" }]\n}"
+            }
+          }
+        },
+        {
+          "name": "Register Employer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alex Employer\",\n  \"email\": \"alex.employer@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"employer\",\n  \"companyName\": \"BrightWorks Inc.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login (Job Seeker)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"jamie.seeker@example.com\",\n  \"password\": \"password123\"\n}" }
+          }
+        },
+        {
+          "name": "Login (Employer)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"alex.employer@example.com\",\n  \"password\": \"password123\"\n}" }
+          }
+        },
+        {
+          "name": "Login (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@jobportal.com\",\n  \"password\": \"ChangeMe123!\"\n}" }
+          }
+        },
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/auth/me", "host": ["{{baseUrl}}"], "path": ["api", "auth", "me"] }
+          }
+        },
+        {
+          "name": "Update My Profile",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/me", "host": ["{{baseUrl}}"], "path": ["api", "auth", "me"] },
+            "body": { "mode": "raw", "raw": "{\n  \"skills\": [\"Node.js\", \"MongoDB\", \"Express\", \"Docker\"]\n}" }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/api/auth/logout", "host": ["{{baseUrl}}"], "path": ["api", "auth", "logout"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Jobs",
+      "item": [
+        {
+          "name": "Get All Jobs (Public)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "jobs"],
+              "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }]
+            }
+          }
+        },
+        {
+          "name": "Get Job By ID (Public)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/jobs/{{jobId}}", "host": ["{{baseUrl}}"], "path": ["api", "jobs", "{{jobId}}"] }
+          }
+        },
+        {
+          "name": "Create Job (Employer)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/jobs", "host": ["{{baseUrl}}"], "path": ["api", "jobs"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Backend Developer\",\n  \"companyName\": \"BrightWorks Inc.\",\n  \"description\": \"Build and maintain REST APIs using Node.js and MongoDB.\",\n  \"location\": \"Remote\",\n  \"employmentType\": \"full-time\",\n  \"salaryRange\": { \"min\": 60000, \"max\": 90000, \"currency\": \"USD\" },\n  \"requiredSkills\": [\"Node.js\", \"Express\", \"MongoDB\"],\n  \"experienceRequired\": \"2-4 years\",\n  \"applicationDeadline\": \"2026-12-31\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get My Job Postings (Employer)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/jobs/employer/my-jobs", "host": ["{{baseUrl}}"], "path": ["api", "jobs", "employer", "my-jobs"] }
+          }
+        },
+        {
+          "name": "Update Job (Employer - Owner Only)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/jobs/{{jobId}}", "host": ["{{baseUrl}}"], "path": ["api", "jobs", "{{jobId}}"] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"closed\"\n}" }
+          }
+        },
+        {
+          "name": "Delete Job (Employer - Owner Only)",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/jobs/{{jobId}}", "host": ["{{baseUrl}}"], "path": ["api", "jobs", "{{jobId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Applications",
+      "item": [
+        {
+          "name": "Apply For Job (Job Seeker)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/applications/{{jobId}}", "host": ["{{baseUrl}}"], "path": ["api", "applications", "{{jobId}}"] },
+            "body": { "mode": "raw", "raw": "{\n  \"coverLetter\": \"I would love to join your team and contribute to BrightWorks Inc.\"\n}" }
+          }
+        },
+        {
+          "name": "Apply For Same Job Again (Expect 400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/applications/{{jobId}}", "host": ["{{baseUrl}}"], "path": ["api", "applications", "{{jobId}}"] },
+            "body": { "mode": "raw", "raw": "{\n  \"coverLetter\": \"Applying again on purpose to test duplicate prevention.\"\n}" }
+          }
+        },
+        {
+          "name": "Get My Applications (Job Seeker)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/applications/my-applications", "host": ["{{baseUrl}}"], "path": ["api", "applications", "my-applications"] }
+          }
+        },
+        {
+          "name": "Get Applications For a Job (Employer - Owner Only)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/applications/job/{{jobId}}", "host": ["{{baseUrl}}"], "path": ["api", "applications", "job", "{{jobId}}"] }
+          }
+        },
+        {
+          "name": "Update Application Status (Employer - Owner Only)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/applications/{{applicationId}}/status", "host": ["{{baseUrl}}"], "path": ["api", "applications", "{{applicationId}}", "status"] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"shortlisted\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/admin/users", "host": ["{{baseUrl}}"], "path": ["api", "admin", "users"] }
+          }
+        },
+        {
+          "name": "Get User By ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/admin/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api", "admin", "users", "{{userId}}"] }
+          }
+        },
+        {
+          "name": "Update User Status (Suspend)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/admin/users/{{userId}}/status", "host": ["{{baseUrl}}"], "path": ["api", "admin", "users", "{{userId}}", "status"] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"suspended\"\n}" }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/admin/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api", "admin", "users", "{{userId}}"] }
+          }
+        },
+        {
+          "name": "Get All Job Postings",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/admin/jobs", "host": ["{{baseUrl}}"], "path": ["api", "admin", "jobs"] }
+          }
+        },
+        {
+          "name": "Get Job By ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/admin/jobs/{{jobId}}", "host": ["{{baseUrl}}"], "path": ["api", "admin", "jobs", "{{jobId}}"] }
+          }
+        },
+        {
+          "name": "Remove Job Posting",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/admin/jobs/{{jobId}}", "host": ["{{baseUrl}}"], "path": ["api", "admin", "jobs", "{{jobId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Security & Negative Tests",
+      "item": [
+        {
+          "name": "Request Protected Route Without Auth (Expect 401)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/auth/me", "host": ["{{baseUrl}}"], "path": ["api", "auth", "me"] }
+          }
+        },
+        {
+          "name": "Request With Invalid/Expired Token (Expect 401)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer invalid.token.value" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/me", "host": ["{{baseUrl}}"], "path": ["api", "auth", "me"] }
+          }
+        },
+        {
+          "name": "Job Seeker Attempts to Create Job (Expect 403)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/jobs", "host": ["{{baseUrl}}"], "path": ["api", "jobs"] },
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Should Not Be Allowed\"\n}" }
+          }
+        },
+        {
+          "name": "Employer Attempts to Update Another Employer's Job (Expect 403)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/jobs/{{employerJobId}}", "host": ["{{baseUrl}}"], "path": ["api", "jobs", "{{employerJobId}}"] },
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Hijack Attempt\"\n}" }
+          }
+        },
+        {
+          "name": "Job Seeker Attempts to View Admin Users (Expect 403)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/admin/users", "host": ["{{baseUrl}}"], "path": ["api", "admin", "users"] }
+          }
+        },
+        {
+          "name": "Register With Invalid Input (Expect 400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"\",\n  \"email\": \"not-an-email\",\n  \"password\": \"123\"\n}" }
+          }
+        }
+      ]
+    }
+  ]
+}
